@@ -71,7 +71,7 @@ systemctl status o2cb
 mkfs.ocfs2 --cluster-size 8K -J size=32M -T mail \
   --node-slots 2 --label ocfs2_fs --mount cluster \
   --fs-feature-level=max-features \
-  --cluster-stack=o2cb --cluster-name=tclust \
+  --cluster-stack=o2cb --cluster-name=c1 \
   /dev/drbd0
 
 mounted.ocfs2 -f
