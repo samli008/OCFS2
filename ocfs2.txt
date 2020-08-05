@@ -27,11 +27,6 @@ cd /lib/modules/4.14.131-generic/kernel/fs/ocfs2
 modprobe ocfs2 ocfs2_dlmfs
 lsmod |grep ocfs2
 
-# ocfs2 service with systemd
-systemctl enable o2cb
-systemctl start o2cb
-systemctl status o2cb
-
 # config ocfs cluster /etc/ocfs2/cluster.conf copy on each nodes
 o2cb add-cluster c1
 o2cb add-node c1 c01 --ip 192.168.100.69
@@ -64,6 +59,7 @@ EOF
 
 systemctl enable o2cb
 systemctl enable ocfs2
+ystemctl start o2cb
 
 o2cb register-cluster c1
 o2cb list-cluster c1
