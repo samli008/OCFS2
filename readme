@@ -1,0 +1,4 @@
+1. oracle uek kernel include ocfs2 drbd module. upgrade uek kernel.
+2. install drbd90-utils
+3. install ocfs2-tools
+4. config drbd resource and ocfs cluster
