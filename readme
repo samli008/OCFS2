@@ -5,4 +5,3 @@
 5. config drbd resource with drbd0.sh
 6. config ocfs cluster
 7. format share volume with mkfs.ocfs2
-8. mount -a
