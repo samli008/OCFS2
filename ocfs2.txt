@@ -32,12 +32,13 @@ systemctl enable o2cb
 systemctl start o2cb
 systemctl status o2cb
 
-# config ocfs cluster
+# config ocfs cluster /etc/ocfs2/cluster.conf copy on each nodes
 o2cb add-cluster c1
 o2cb add-node c1 c01 --ip 192.168.100.69
 o2cb add-node c1 c02 --ip 192.168.100.70
 o2cb list-cluster c1
 
+# copy on each nodes
 cat > /etc/sysconfig/o2cb << EOF
 # O2CB_ENABLED: 'true' means to load the driver on boot.
 O2CB_ENABLED=true
