@@ -9,8 +9,8 @@ echo "-----Make sure /root/ocfs soft folder exist -------------"
 echo
 # ocfs cluster
 echo "choise 1 to upgrade kernel on all nodes."
-echo "choise 2 to install ocfs2-tools on all nodes."
-echo "choise 3 to config ocfs-cluster on all nodes."
+echo "choise 2 to config ocfs-cluster on all nodes."
+echo "choise 3 to mount ocfs share volume on all nodes."
 read -p "pls input your choise [1]: " n
 
 case $n in
