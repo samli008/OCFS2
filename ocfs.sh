@@ -81,6 +81,28 @@ ssh $node1 "o2cb register-cluster c1;o2cb cluster-status"
 ssh $node2 "o2cb register-cluster c1;o2cb cluster-status"
 ;;
 
+3)
+read -p "pls input first node name: " node1
+read -p "pls input second node name: " node2
+read -p "pls input share volume [/dev/drbd0]: " vol
+read -p "pls input mount point [/data]: " dir
+
+ssh $node1 "mkdir $dir"
+ssh $node2 "mkdir $dir"
+
+mkfs.ocfs2 --cluster-size 8K -J size=32M -T mail \
+  --node-slots 2 --label ocfs2_fs --mount cluster \
+  --fs-feature-level=max-features \
+  --cluster-stack=o2cb --cluster-name=c1 \
+  $vol
+
+ssh $node1 echo "$vol $dir ocfs2 rw,_netdev 0 0" >> /etc/fstab
+ssh $node2 echo "$vol $dir ocfs2 rw,_netdev 0 0" >> /etc/fstab
+
+ssh $node1 "mount -a;df -hT |grep ocfs"
+ssh $node2 "mount -a;df -hT |grep ocfs"
+;;
+
 *)
 echo "pls input 1-3 choise."
 exit;
