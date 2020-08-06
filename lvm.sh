@@ -11,9 +11,6 @@ EOF
 
 chmod 755 /etc/rc.local
 
-mkdir /nfs
-echo "/dev/drbd0  /nfs ocfs2 rw,_netdev 0 0" >> /etc/fstab
-
 cat > /etc/exports << EOF
 /nfs 192.168.6.0/24(rw,no_root_squash,async)
 EOF
