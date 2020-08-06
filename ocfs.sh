@@ -29,6 +29,7 @@ scp -r $dir $node2:/root/
 
 ssh $node1 "yum -y install $dir/linux-firmware.rpm;yum -y install $dir/kernel.rpm"
 ssh $node2 "yum -y install $dir/linux-firmware.rpm;yum -y install $dir/kernel.rpm"
+echo "pls reboot each nodes to take effect new kernel."
 ;;
 
 2)

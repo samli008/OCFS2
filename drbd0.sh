@@ -47,7 +47,9 @@ ssh $node2 "drbdadm create-md drbd0"
 ssh $node1 "drbdadm up drbd0"
 ssh $node2 "drbdadm up drbd0"
 
+sleep 5
 ssh $node1 "drbdadm primary drbd0 --force"
+sleep 5
 ssh $node2 "drbdadm primary drbd0"
-
+sleep 5
 drbdadm status drbd0
