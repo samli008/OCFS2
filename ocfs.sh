@@ -7,6 +7,7 @@ echo "-----Make sure install node ssh trusted each nodes----------"
 echo "-----Make sure each nodes in /etc/hosts configured---"
 echo "-----Make sure /root/ocfs soft folder exist -------------"
 echo
+
 # ocfs cluster
 echo "choise 1 to upgrade kernel on all nodes."
 echo "choise 2 to config ocfs-cluster on all nodes."
@@ -42,9 +43,7 @@ ssh $node1 "rpm -ivh $dir/ocfs2-tools.rpm"
 ssh $node2 "rpm -ivh $dir/ocfs2-tools.rpm"
 
 ssh $node1 "o2cb add-cluster c1;o2cb add-node c1 $node1 --ip $ip1;o2cb add-node c1 $node2 --ip $ip2"
-
 ssh $node2 "o2cb add-cluster c1;o2cb add-node c1 $node1 --ip $ip1;o2cb add-node c1 $node2 --ip $ip2"
-
 
 cat > /etc/sysconfig/o2cb << EOF
 # O2CB_ENABLED: 'true' means to load the driver on boot.
@@ -72,7 +71,6 @@ EOF
 scp /etc/sysconfig/o2cb $node2:/etc/sysconfig/
 
 ssh $node1 "systemctl enable o2cb;systemctl enable ocfs2;systemctl start o2cb"
-
 ssh $node2 "systemctl enable o2cb;systemctl enable ocfs2;systemctl start o2cb"
 
 o2cb list-cluster c1
