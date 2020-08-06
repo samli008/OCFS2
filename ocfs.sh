@@ -38,8 +38,8 @@ read -p "pls input second node ip: " ip2
 
 dir="/root/ocfs"
 
-ssh $node1 "yum -y install $dir/ocfs2-tools"
-ssh $node2 "yum -y install $dir/ocfs2-tools"
+ssh $node1 "rpm -ivh $dir/ocfs2-tools.rpm"
+ssh $node2 "rpm -ivh $dir/ocfs2-tools.rpm"
 
 ssh $node1 "o2cb add-cluster c1;o2cb add-node c1 $node1 --ip $ip1;o2cb add-node c1 $node2 --ip $ip2"
 
