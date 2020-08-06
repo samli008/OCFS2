@@ -98,8 +98,9 @@ mkfs.ocfs2 --cluster-size 8K -J size=32M -T mail \
 ssh $node1 "echo '$vol $dir ocfs2 rw,_netdev 0 0' >> /etc/fstab"
 ssh $node2 "echo '$vol $dir ocfs2 rw,_netdev 0 0' >> /etc/fstab"
 
-ssh $node1 "mount -a;df -hT |grep ocfs"
-ssh $node2 "mount -a;df -hT |grep ocfs"
+ssh $node1 "mount -a"
+ssh $node2 "mount -a"
+mounted.ocfs2 -f
 ;;
 
 *)
