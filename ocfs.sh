@@ -10,8 +10,9 @@ echo
 
 # ocfs cluster
 echo "choise 1 to upgrade kernel on all nodes."
-echo "choise 2 to config ocfs-cluster on all nodes."
-echo "choise 3 to mount ocfs share volume on all nodes."
+echo "choise 2 to config drbd on all nodes."
+echo "choise 3 to config ocfs-cluster on all nodes."
+echo "choise 4 to mount ocfs share volume on all nodes."
 read -p "pls input your choise [1]: " n
 
 case $n in
@@ -27,12 +28,71 @@ read -p "pls input second node name: " node2
 dir="/root/ocfs"
 scp -r $dir $node2:/root/
 
-ssh $node1 "yum -y install $dir/linux-firmware.rpm;yum -y install $dir/kernel.rpm"
-ssh $node2 "yum -y install $dir/linux-firmware.rpm;yum -y install $dir/kernel.rpm"
+ssh $node1 "yum -y install $dir/linux-firmware.rpm;rpm -ivh $dir/kernel.rpm"
+ssh $node2 "yum -y install $dir/linux-firmware.rpm;rpm -ivh $dir/kernel.rpm"
 echo "pls reboot each nodes to take effect new kernel."
 ;;
 
 2)
+read -p "pls input first node name: " node1
+read -p "pls input second node name: " node2
+read -p "pls input first node ip: " ip1
+read -p "pls input second node ip: " ip2
+read -p "pls input drbd device[/dev/vg1/lv1]: " dev
+
+dir="/root/ocfs"
+ssh $node1 "rpm -ivh $dir/drbd-utils.rpm;rpm -ivh $dir/kmod-drbd.rpm"
+ssh $node2 "rpm -ivh $dir/drbd-utils.rpm;rpm -ivh $dir/kmod-drbd.rpm"
+
+ssh $node1 "systemctl enable drbd;systemctl start drbd"
+ssh $node2 "systemctl enable drbd;systemctl start drbd"
+
+cat > /etc/drbd.d/global_common.conf << EOF
+global {
+  usage-count no;
+}
+common {
+  net {
+    protocol C;
+  }
+}
+EOF
+
+cat > /etc/drbd.d/drbd0.res << EOF
+resource drbd0 {
+net {
+allow-two-primaries;
+}
+  disk $dev;
+  device /dev/drbd0;
+  meta-disk internal;
+  on $node1 {
+    address $ip1:7789;
+  }
+  on $node2 {
+    address $ip2:7789;
+  }
+}
+EOF
+
+scp /etc/drbd.d/global_common.conf $node2:/etc/drbd.d/
+scp /etc/drbd.d/drbd0.res $node2:/etc/drbd.d/
+
+ssh $node1 "drbdadm create-md drbd0"
+ssh $node2 "drbdadm create-md drbd0"
+
+ssh $node1 "drbdadm up drbd0"
+ssh $node2 "drbdadm up drbd0"
+
+sleep 5
+ssh $node1 "drbdadm primary drbd0 --force"
+sleep 5
+ssh $node2 "drbdadm primary drbd0"
+sleep 5
+drbdadm status drbd0
+;;
+
+3)
 read -p "pls input first node name: " node1
 read -p "pls input second node name: " node2
 read -p "pls input first node ip: " ip1
@@ -80,7 +140,7 @@ ssh $node1 "o2cb register-cluster c1;o2cb cluster-status"
 ssh $node2 "o2cb register-cluster c1;o2cb cluster-status"
 ;;
 
-3)
+4)
 read -p "pls input first node name: " node1
 read -p "pls input second node name: " node2
 read -p "pls input share volume [/dev/drbd0]: " vol
@@ -104,7 +164,7 @@ mounted.ocfs2 -f
 ;;
 
 *)
-echo "pls input 1-3 choise."
+echo "pls input 1-4 choise."
 exit;
 
 esac
